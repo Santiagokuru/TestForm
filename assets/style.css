@@ -1,0 +1,111 @@
+/* Variables de colores */
+:root {
+    --color-principal: #F2B23E;
+    --color-fondo-body: #e4e4e4;
+    --color-fondo-card: #ffffff;
+    --color-texto: #333333;
+}
+
+body {
+    font-family: 'Rubik', sans-serif;
+    background-color: var(--color-fondo-body);
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card {
+    background-color: var(--color-fondo-card);
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+h2 {
+    margin-top: 0;
+    color: var(--color-texto);
+    font-weight: 500;
+}
+
+p {
+    color: #666;
+    margin-bottom: 25px;
+    line-height: 1.5;
+    font-size: 15px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-texto);
+}
+
+input[type="email"] {
+    width: 100%;
+    padding: 12px;
+    box-sizing: border-box;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-family: 'Rubik', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+input[type="email"]:focus {
+    border-color: var(--color-principal);
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--color-principal);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-family: 'Rubik', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: filter 0.3s;
+}
+
+.btn-submit:hover {
+    filter: brightness(95%);
+}
+
+/* --- ESTILOS DE LA BARRA DE CARGA --- */
+.loading-container {
+    display: none; /* Oculto por defecto */
+    width: 100%;
+    margin-top: 10px;
+}
+
+.loading-bar {
+    width: 0%; /* Empieza vacía */
+    height: 10px;
+    background-color: var(--color-principal);
+    border-radius: 5px;
+    /* La transición controlará la animación de 4 segundos */
+    transition: width 4s linear; 
+}
+
+.loading-text {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #999;
+    margin-bottom: 0;
+}
