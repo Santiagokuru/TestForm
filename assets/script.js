@@ -57,7 +57,7 @@ async function enviarDatosAPI() {
                 // 2. Construimos la URL agregando el parámetro ?email=
                 //    Nota: Depende de la página destino leer este parámetro 'email'.
                 //    Si usan otro nombre (como 'user' o 'login'), habría que cambiarlo aquí.
-                const urlDestino = `https://dev.platform.simskills.io?email=${emailCodificado}`;
+                const urlDestino = `https://dev.platform.simskills.io/login?email=${emailCodificado}`;
                 
                 // 3. Redirigimos
                 window.location.href = urlDestino;
