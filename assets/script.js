@@ -1,3 +1,4 @@
+// Selección de elementos del DOM
 const form = document.getElementById('miFormulario');
 const submitBtn = document.getElementById('submitBtn');
 const loadingContainer = document.getElementById('loadingContainer');
@@ -5,68 +6,69 @@ const loadingBar = document.getElementById('loadingBar');
 const loadingText = document.getElementById('loadingText');
 const emailInput = document.getElementById('email');
 
+// Evento principal
 form.addEventListener('submit', function(e) {
-    e.preventDefault();
+    e.preventDefault(); // Evita que la página se recargue
 
-    // 1. Preparar UI
-    submitBtn.style.display = 'none';
-    loadingContainer.style.display = 'block';
+    // 1. Preparar la Interfaz (UI)
+    submitBtn.style.display = 'none';       // Ocultar botón
+    loadingContainer.style.display = 'block'; // Mostrar barra
 
-    // 2. Iniciar animación
+    // 2. Iniciar animación de la barra (con pequeño retraso para renderizado)
     setTimeout(() => {
         loadingBar.style.width = '100%';
     }, 50);
 
-    // 3. Esperar 4 segundos antes de enviar
+    // 3. Esperar 4 segundos antes de ejecutar el fetch
     setTimeout(() => {
-        enviarDatosAjax();
+        enviarDatosAPI();
     }, 4000);
 });
 
-function enviarDatosAjax() {
+// Función asíncrona para enviar los datos usando FETCH
+async function enviarDatosAPI() {
     const email = emailInput.value;
     // Tu URL de n8n
     const url = "https://n8n-n8n.ppdj7d.easypanel.host/webhook/6cad4f16-d4a9-4b0c-8067-79b5443c19a3";
 
-    loadingText.textContent = "Enviando datos a n8n...";
+    // Actualizamos texto
+    loadingText.textContent = "Enviando solicitud...";
 
-    const data = {
-        email: email,
-        fecha: new Date().toISOString() // Enviamos fecha para verificar recepción
-    };
+    try {
+        // Ejecutamos la petición fetch
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: email,
+                timestamp: new Date().toISOString()
+            })
+        });
 
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            // 'Accept': 'application/json' // Opcional, buena práctica
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => {
-        console.log("Status Code:", response.status); // Ver código en consola (200, 404, 500)
-
+        // Verificamos si la respuesta fue exitosa (Códigos 200-299)
         if (response.ok) {
-            loadingText.textContent = "¡Demo activada correctamente!";
-            loadingText.style.color = "green";
-            // Opcional: Limpiar formulario
-            emailInput.value = "";
-            return response.text(); // O response.json() si n8n devuelve JSON
-        } else {
-            // Si llega aquí, n8n respondió pero con error (ej. 404 no encontrado)
-            loadingText.textContent = "Error: n8n no está escuchando (404) o falló.";
-            loadingText.style.color = "red";
-            console.error("Error del servidor:", response.statusText);
+            loadingText.textContent = "¡Demo activada con éxito!";
+            loadingText.style.color = "#4CAF50"; // Verde
+            console.log("Éxito al enviar datos");
             
-            if(response.status === 404) {
-                alert("ERROR 404: Como es una URL de prueba (.../webhook-test/...), asegúrate de presionar el botón 'Execute Workflow' en n8n antes de enviar el formulario.");
-            }
+            // Opcional: Redirigir o limpiar formulario después de un momento
+            // form.reset();
+        } else {
+            // Si el servidor responde con error (ej. 404 o 500)
+            throw new Error(`Error del servidor: ${response.status}`);
         }
-    })
-    .catch(error => {
-        // Errores de red o CORS
-        console.error('Error de Fetch:', error);
-        loadingText.textContent = "Error de conexión (Posible bloqueo CORS). Revisa la consola.";
-        loadingText.style.color = "red";
-    });
+
+    } catch (error) {
+        // Capturamos errores de red o CORS
+        console.error("Hubo un problema:", error);
+        loadingText.textContent = "Error al conectar. Revisa la consola.";
+        loadingText.style.color = "#F44336"; // Rojo
+        
+        // Mensaje específico para n8n si es 404 (común en pruebas)
+        if (error.message.includes('404')) {
+            alert("Error 404: Asegúrate de presionar 'Execute Workflow' en n8n antes de enviar.");
+        }
+    }
 }
