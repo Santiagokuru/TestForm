@@ -29,7 +29,7 @@ form.addEventListener('submit', function(e) {
 async function enviarDatosAPI() {
     const email = emailInput.value;
     // Tu URL de n8n
-    const url = "https://n8n-n8n.ppdj7d.easypanel.host/webhook/6cad4f16-d4a9-4b0c-8067-79b5443c19a3";
+    const url = "https://n8n-n8n.ppdj7d.easypanel.host/webhook-test/6cad4f16-d4a9-4b0c-8067-79b5443c19a3";
 
     // Actualizamos texto
     loadingText.textContent = "Enviando solicitud...";
