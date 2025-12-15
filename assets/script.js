@@ -6,69 +6,67 @@ const loadingBar = document.getElementById('loadingBar');
 const loadingText = document.getElementById('loadingText');
 const emailInput = document.getElementById('email');
 
-// Evento principal
+// Evento principal del formulario
 form.addEventListener('submit', function(e) {
-    e.preventDefault(); // Evita que la página se recargue
+    e.preventDefault(); // 1. Evitar recarga
 
-    // 1. Preparar la Interfaz (UI)
-    submitBtn.style.display = 'none';       // Ocultar botón
-    loadingContainer.style.display = 'block'; // Mostrar barra
+    // 2. UI: Ocultar botón y mostrar barra
+    submitBtn.style.display = 'none';
+    loadingContainer.style.display = 'block';
 
-    // 2. Iniciar animación de la barra (con pequeño retraso para renderizado)
+    // 3. Animación de barra
     setTimeout(() => {
         loadingBar.style.width = '100%';
     }, 50);
 
-    // 3. Esperar 4 segundos antes de ejecutar el fetch
+    // 4. Esperar 4 segundos antes de enviar el JSON
     setTimeout(() => {
         enviarDatosAPI();
     }, 4000);
 });
 
-// Función asíncrona para enviar los datos usando FETCH
+// Función asíncrona para enviar JSON con Fetch
 async function enviarDatosAPI() {
     const email = emailInput.value;
-    // Tu URL de n8n
     const url = "https://n8n-n8n.ppdj7d.easypanel.host/webhook-test/6cad4f16-d4a9-4b0c-8067-79b5443c19a3";
 
-    // Actualizamos texto
-    loadingText.textContent = "Enviando solicitud...";
+    // 5. Crear el objeto con los datos
+    const datosParaEnviar = {
+        email: email
+        // Si quieres agregar más datos en el futuro, hazlo aquí:
+        // nombre: "Juan",
+        // fecha: new Date().toISOString()
+    };
+
+    loadingText.textContent = "Enviando JSON...";
 
     try {
-        // Ejecutamos la petición fetch
         const response = await fetch(url, {
             method: 'POST',
             headers: {
+                // ESTO ES VITAL: Define que el cuerpo es JSON
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                email: email,
-                timestamp: new Date().toISOString()
-            })
+            // ESTO ES VITAL: Transforma el objeto JS a String JSON
+            body: JSON.stringify(datosParaEnviar)
         });
 
-        // Verificamos si la respuesta fue exitosa (Códigos 200-299)
+        // Verificamos respuesta
         if (response.ok) {
             loadingText.textContent = "¡Demo activada con éxito!";
-            loadingText.style.color = "#4CAF50"; // Verde
-            console.log("Éxito al enviar datos");
-            
-            // Opcional: Redirigir o limpiar formulario después de un momento
-            // form.reset();
+            loadingText.style.color = "green";
+            console.log("JSON enviado correctamente:", datosParaEnviar);
         } else {
-            // Si el servidor responde con error (ej. 404 o 500)
-            throw new Error(`Error del servidor: ${response.status}`);
+            throw new Error(`Error status: ${response.status}`);
         }
 
     } catch (error) {
-        // Capturamos errores de red o CORS
-        console.error("Hubo un problema:", error);
-        loadingText.textContent = "Error al conectar. Revisa la consola.";
-        loadingText.style.color = "#F44336"; // Rojo
+        console.error("Error al enviar:", error);
+        loadingText.textContent = "Error de conexión. Revisa la consola.";
+        loadingText.style.color = "red";
         
-        // Mensaje específico para n8n si es 404 (común en pruebas)
         if (error.message.includes('404')) {
-            alert("Error 404: Asegúrate de presionar 'Execute Workflow' en n8n antes de enviar.");
+            alert("Recuerda activar el botón 'Execute Workflow' en n8n.");
         }
     }
 }
