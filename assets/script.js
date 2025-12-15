@@ -54,8 +54,14 @@ async function enviarDatosAPI() {
         // Verificamos respuesta
         if (response.ok) {
             loadingText.textContent = "¡Demo activada con éxito!";
-            loadingText.style.color = "green";
-            console.log("JSON enviado correctamente:", datosParaEnviar);
+             loadingText.style.color = "#28a745"; // Color verde
+            console.log("Datos enviados. Iniciando cuenta regresiva para redirección.");
+            
+            setTimeout(() => {
+                // 3. Redirigir a page
+                window.location.href = "https://es.wikipedia.org/wiki/Wikipedia:Portada";
+            }, 1500);
+            
         } else {
             throw new Error(`Error status: ${response.status}`);
         }
