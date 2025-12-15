@@ -27,7 +27,7 @@ form.addEventListener('submit', function(e) {
 // Función asíncrona para enviar datos y redirigir con el email
 async function enviarDatosAPI() {
     const email = emailInput.value;
-    const url = "https://n8n-n8n.ppdj7d.easypanel.host/webhook-test/6cad4f16-d4a9-4b0c-8067-79b5443c19a3";
+    const url = "https://n8n-n8n.ppdj7d.easypanel.host/webhook/6cad4f16-d4a9-4b0c-8067-79b5443c19a3";
 
     loadingText.textContent = "Enviando datos...";
 
