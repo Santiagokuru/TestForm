@@ -1,7 +1,7 @@
 /* Variables de colores */
 :root {
     --color-principal: #F2B23E;
-    --color-fondo-body: #ef7272;
+    --color-fondo-body: #e4e4e4;
     --color-fondo-card: #ffffff;
     --color-texto: #333333;
 }
@@ -25,6 +25,10 @@ body {
     max-width: 400px;
     text-align: center;
     box-sizing: border-box;
+    img{
+        width: 250px;
+        padding-bottom: 25px;
+    }
 }
 
 h2 {
