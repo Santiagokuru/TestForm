@@ -6,8 +6,29 @@ const loadingText = document.getElementById('loadingText');
 const emailInput = document.getElementById('email');
 
 // Evento principal
-form.addEventListener('submit', function(e) {
-    e.preventDefault(); 
+form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    // --- NUEVA VALIDACIÓN: BLOQUEAR YAHOO Y HOTMAIL ---
+    // 1. Obtenemos el valor del email y lo convertimos a minúsculas para evitar errores (ej: User@Yahoo.com)
+    const emailVal = emailInput.value.toLowerCase().trim();
+
+    // 2. Comprobamos si termina en los dominios prohibidos
+    if (emailVal.endsWith('@gmail.com') || emailVal.endsWith('@hotmail.com')|| emailVal.endsWith('@yahoo.com')) {
+        // 3. Mostramos un mensaje de error al usuario
+        Swal.fire({
+            title: 'Uups!Prueba con otro correo',
+            text: 'Para esta campaña, por favor utiliza un correo corporativo',
+            icon: 'warning',
+            confirmButtonColor: '#F2B23E',
+            confirmButtonText: 'Entendido'
+
+        })
+        // 4. IMPORTANTE: Usamos 'return' para detener el código aquí.
+        // Así no se ejecuta la barra de carga ni el envío de datos.
+        return;
+    }
+    // --------------------------------------------------
 
     // 1. UI: Ocultar botón y mostrar barra
     submitBtn.style.display = 'none';
@@ -21,7 +42,7 @@ form.addEventListener('submit', function(e) {
     // 3. Esperar 4 segundos antes de enviar el JSON
     setTimeout(() => {
         enviarDatosAPI();
-    }, 4000);
+    }, 2000); // Nota: En tu código original decía 2000 (2 seg), aunque el comentario decía 4.
 });
 
 // Función asíncrona para enviar datos y redirigir con el email
@@ -42,26 +63,13 @@ async function enviarDatosAPI() {
 
         if (response.ok) {
             loadingText.textContent = "¡Demo activada! Redirigiendo...";
-            loadingText.style.color = "#28a745"; // Verde
+            loadingText.style.color = "#28a745";
             console.log("Datos enviados correctamente.");
 
-            // Esperamos 1.5 segundos para que el usuario lea el mensaje
             setTimeout(() => {
-                
-                // --- LÓGICA DE REDIRECCIÓN CON EMAIL ---
-                
-                // 1. Codificamos el email para proteger símbolos como '+' o '@'
-                //    Ejemplo: 'juan+test@gmail.com' se convierte en 'juan%2Btest%40gmail.com'
                 const emailCodificado = encodeURIComponent(email);
-                
-                // 2. Construimos la URL agregando el parámetro ?email=
-                //    Nota: Depende de la página destino leer este parámetro 'email'.
-                //    Si usan otro nombre (como 'user' o 'login'), habría que cambiarlo aquí.
                 const urlDestino = `https://dev.platform.simskills.io/login?email=${emailCodificado}`;
-                
-                // 3. Redirigimos
                 window.location.href = urlDestino;
-
             }, 1500);
 
         } else {
@@ -72,7 +80,7 @@ async function enviarDatosAPI() {
         console.error("Error al enviar:", error);
         loadingText.textContent = "Error de conexión. No se pudo redirigir.";
         loadingText.style.color = "red";
-        
+
         if (error.message.includes('404')) {
             alert("Recuerda activar el botón 'Execute Workflow' en n8n.");
         }
