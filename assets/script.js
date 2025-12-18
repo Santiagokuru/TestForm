@@ -17,7 +17,7 @@ form.addEventListener('submit', function (e) {
     if (emailVal.endsWith('@gmail.com') || emailVal.endsWith('@hotmail.com')|| emailVal.endsWith('@yahoo.com')) {
         // 3. Mostramos un mensaje de error al usuario
         Swal.fire({
-            title: 'Uups!Prueba con otro correo',
+            title: 'Uups! Prueba con otro correo',
             text: 'Para esta campaña, por favor utiliza un correo corporativo',
             icon: 'warning',
             confirmButtonColor: '#F2B23E',
