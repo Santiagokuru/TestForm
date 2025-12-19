@@ -20,12 +20,13 @@ body {
     background-color: var(--color-fondo-card);
     padding: 40px;
     border-radius: 10px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     width: 90%;
     max-width: 400px;
     text-align: center;
     box-sizing: border-box;
-    img{
+
+    img {
         width: 250px;
         padding-bottom: 25px;
     }
@@ -39,7 +40,7 @@ h2 {
 
 p {
     color: #666;
-    margin-bottom: 25px;
+    margin-bottom: 15px;
     line-height: 1.5;
     font-size: 15px;
 }
@@ -93,18 +94,20 @@ input[type="email"]:focus {
 
 /* --- ESTILOS DE LA BARRA DE CARGA --- */
 .loading-container {
-    display: none; /* Oculto por defecto */
+    display: none;
+    /* Oculto por defecto */
     width: 100%;
     margin-top: 10px;
 }
 
 .loading-bar {
-    width: 0%; /* Empieza vacía */
+    width: 0%;
+    /* Empieza vacía */
     height: 10px;
     background-color: var(--color-principal);
     border-radius: 5px;
     /* La transición controlará la animación de 4 segundos */
-    transition: width 4s linear; 
+    transition: width 4s linear;
 }
 
 .loading-text {
@@ -112,4 +115,16 @@ input[type="email"]:focus {
     font-size: 12px;
     color: #999;
     margin-bottom: 0;
+}
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: var(--color-texto);
+    gap: 8px;
+    p {
+        font-size: 13px;
+    }
 }
