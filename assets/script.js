@@ -1,3 +1,4 @@
+// 1. Selección de elementos del DOM
 const form = document.getElementById('miFormulario');
 const submitBtn = document.getElementById('submitBtn');
 const loadingContainer = document.getElementById('loadingContainer');
@@ -5,52 +6,55 @@ const loadingBar = document.getElementById('loadingBar');
 const loadingText = document.getElementById('loadingText');
 const emailInput = document.getElementById('email');
 
-// Evento principal
+// 2. Evento principal de envío
 form.addEventListener('submit', function (e) {
     e.preventDefault();
 
-    // --- NUEVA VALIDACIÓN: BLOQUEAR YAHOO Y HOTMAIL ---
-    // 1. Obtenemos el valor del email y lo convertimos a minúsculas para evitar errores (ej: User@Yahoo.com)
+    // --- VALIDACIÓN: BLOQUEAR CORREOS PERSONALES ---
     const emailVal = emailInput.value.toLowerCase().trim();
 
-    // 2. Comprobamos si termina en los dominios prohibidos
-    if (emailVal.endsWith('@gmail.com') || emailVal.endsWith('@hotmail.com')|| emailVal.endsWith('@yahoo.com')) {
-        // 3. Mostramos un mensaje de error al usuario
+    // Lista extendida de dominios no corporativos
+    const dominiosProhibidos = ['@gmail.com', '@hotmail.com', '@yahoo.com', '@outlook.com', '@live.com'];
+    const esProhibido = dominiosProhibidos.some(dominio => emailVal.endsWith(dominio));
+
+    if (esProhibido) {
         Swal.fire({
-            title: 'Uups!Prueba con otro correo',
-            text: 'Para esta campaña, por favor utiliza un correo corporativo',
+            title: '¡Uups! Prueba con otro correo',
+            text: 'Para esta campaña, por favor utiliza un correo corporativo.',
             icon: 'warning',
             confirmButtonColor: '#F2B23E',
             confirmButtonText: 'Entendido'
-
-        })
-        // 4. IMPORTANTE: Usamos 'return' para detener el código aquí.
-        // Así no se ejecuta la barra de carga ni el envío de datos.
-        return;
+        });
+        return; // Detiene la ejecución si el correo no es válido
     }
-    // --------------------------------------------------
 
-    // 1. UI: Ocultar botón y mostrar barra
+    // --- UI: INICIO DEL PROCESO DE CARGA ---
+    // Deshabilitamos el botón y lo ocultamos para evitar múltiples envíos
+    submitBtn.disabled = true;
     submitBtn.style.display = 'none';
+    
+    // Mostramos el contenedor de carga
     loadingContainer.style.display = 'block';
+    loadingBar.style.width = '0%';
+    loadingText.textContent = "Preparando demo...";
+    loadingText.style.color = "initial";
 
-    // 2. Animación de barra
+    // Animación visual de la barra (se llena en 2 segundos)
     setTimeout(() => {
         loadingBar.style.width = '100%';
     }, 50);
 
-    // 3. Esperar 4 segundos antes de enviar el JSON
+    // Esperamos 2 segundos (tiempo de la animación) antes de llamar a la API
     setTimeout(() => {
-        enviarDatosAPI();
-    }, 2000); // Nota: En tu código original decía 2000 (2 seg), aunque el comentario decía 4.
+        enviarDatosAPI(emailVal);
+    }, 2000);
 });
 
-// Función asíncrona para enviar datos y redirigir con el email
-async function enviarDatosAPI() {
-    const email = emailInput.value;
+// 3. Función asíncrona para comunicación con n8n
+async function enviarDatosAPI(email) {
     const url = "https://n8n-n8n.ppdj7d.easypanel.host/webhook/6cad4f16-d4a9-4b0c-8067-79b5443c19a3";
 
-    loadingText.textContent = "Enviando datos...";
+    loadingText.textContent = "Enviando datos de registro...";
 
     try {
         const response = await fetch(url, {
@@ -58,14 +62,17 @@ async function enviarDatosAPI() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ email: email })
+            body: JSON.stringify({ 
+                email: email,
+                fecha: new Date().toISOString() // Opcional: añade marca de tiempo
+            })
         });
 
         if (response.ok) {
             loadingText.textContent = "¡Demo activada! Redirigiendo...";
             loadingText.style.color = "#28a745";
-            console.log("Datos enviados correctamente.");
 
+            // Pequeña pausa para que el usuario lea el mensaje de éxito
             setTimeout(() => {
                 const emailCodificado = encodeURIComponent(email);
                 const urlDestino = `https://dev.platform.simskills.io/login?email=${emailCodificado}`;
@@ -73,16 +80,25 @@ async function enviarDatosAPI() {
             }, 1500);
 
         } else {
-            throw new Error(`Error status: ${response.status}`);
+            throw new Error(`Error en el servidor: ${response.status}`);
         }
 
     } catch (error) {
         console.error("Error al enviar:", error);
-        loadingText.textContent = "Error de conexión. No se pudo redirigir.";
+        
+        // UI en caso de error
+        loadingText.textContent = "Hubo un error de conexión.";
         loadingText.style.color = "red";
+        
+        // Restauramos el botón para que el usuario pueda intentar de nuevo
+        setTimeout(() => {
+            submitBtn.disabled = false;
+            submitBtn.style.display = 'block';
+            loadingContainer.style.display = 'none';
+        }, 3000);
 
         if (error.message.includes('404')) {
-            alert("Recuerda activar el botón 'Execute Workflow' en n8n.");
+            alert("Error 404: Asegúrate de que el flujo en n8n esté activo (Execute Workflow).");
         }
     }
 }
