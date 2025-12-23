@@ -19,8 +19,8 @@ form.addEventListener('submit', function (e) {
 
     if (esProhibido) {
         Swal.fire({
-            title: '¡Uups! Prueba con otro correo',
-            text: 'El acceso a la demo solo está disponible mediante un correo corporativo.',
+            title: 'El acceso a la demo solo está disponible mediante un correo corporativo.',
+            //text: 'El acceso a la demo solo está disponible mediante un correo corporativo.',
             icon: 'warning',
             confirmButtonColor: '#F2B23E',
             confirmButtonText: 'Entendido'
